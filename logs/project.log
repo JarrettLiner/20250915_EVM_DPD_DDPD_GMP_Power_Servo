@@ -1,0 +1,53 @@
+2025-08-11 09:18:08,375 - INFO - Starting RF measurement script
+2025-08-11 09:18:08,389 - INFO - Loaded test inputs from C:\Users\LINER\Documents\PycharmProjects\20250804_Power_Servo\src\test_inputs.json
+2025-08-11 09:18:08,390 - DEBUG - Test inputs: {
+  "Calibration_Config": {
+    "center_frequency_ghz": {
+      "range": {
+        "start_ghz": 2.3,
+        "stop_ghz": 2.55,
+        "step_mhz": 50,
+        "power_dbm": 0.0
+      }
+    }
+  },
+  "Input_Cal": {
+    "enable": true
+  },
+  "Output_Cal": {
+    "enable": true
+  }
+}
+2025-08-11 09:18:08,392 - INFO - Saved results to: C:\Users\LINER\Documents\PycharmProjects\20250804_Power_Servo\src\results_output.json
+2025-08-11 09:18:10,155 - INFO - Successfully saved to: C:\Users\LINER\Documents\PycharmProjects\20250804_Power_Servo\src\results_output.xlsx
+2025-08-11 09:19:03,685 - INFO - Starting RF measurement script
+2025-08-11 09:19:03,687 - INFO - Loaded test inputs from C:\Users\LINER\Documents\PycharmProjects\20250804_Power_Servo\src\test_inputs.json
+2025-08-11 09:19:03,688 - DEBUG - Test inputs: {
+  "Calibration_Config": {
+    "center_frequency_ghz": {
+      "range": {
+        "start_ghz": 2.0,
+        "stop_ghz": 5.0,
+        "step_mhz": 50,
+        "power_dbm": 0.0
+      }
+    }
+  },
+  "Input_Cal": {
+    "enable": true
+  },
+  "Output_Cal": {
+    "enable": false
+  },
+  "Sweep_Measurement": {
+    "run": false,
+    "range": {
+      "start_ghz": 2.0,
+      "stop_ghz": 2.5,
+      "step_mhz": 50,
+      "power_dbm": 0.0
+    }
+  }
+}
+2025-08-11 09:19:03,689 - INFO - Saved results to: C:\Users\LINER\Documents\PycharmProjects\20250804_Power_Servo\src\results_output.json
+2025-08-11 09:19:04,011 - INFO - Successfully saved to: C:\Users\LINER\Documents\PycharmProjects\20250804_Power_Servo\src\results_output.xlsx

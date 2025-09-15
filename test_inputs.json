@@ -1,0 +1,44 @@
+{
+  "Sweep_Measurement": {
+    "range": {
+      "start_ghz": 2.0,
+      "stop_ghz": 2.05,
+      "step_mhz": 50,
+      "power_dbm": 5.0,
+      "tolerence_db": 0.1,
+      "expected_gain_db": 18.0,
+      "ddpd_iterations": 5,
+      "servo_iterations": 5,
+      "use_power_servo": true,
+      "use_K18_power_servo": false
+    },
+    "user_comment_mode": "full_frame_nrx",
+    "setup_mode": "fullframe"
+  },
+  "User_Comments": {
+    "full_frame_nrx": [
+      "The 5GNR waveform used in this test is a 10MHz UL, 30kHz SCS, 24QAM, 24RB, 0rbo configuration.",
+      "This test utilizes the full 5G frame.",
+      "The power servo is done after each DPD type to ensure accurate output power.",
+      "The power servo uses the NRX power meter external sensors for power servo."
+    ],
+    "first_slot_nrx": [
+      "The 5GNR waveform used in this test is a 10MHz UL, 30kHz SCS, 24QAM, 24RB, 0rbo configuration.",
+      "This test utilizes only the first slot of the 5G frame.",
+      "The power servo is done after each DPD type to ensure accurate output power.",
+      "The power servo uses the NRX power meter external sensors for power servo."
+    ],
+    "full_frame_k18": [
+      "The 5GNR waveform used in this test is a 10MHz UL, 30kHz SCS, 24QAM, 24RB, 0rbo configuration.",
+      "This test utilizes the full 5G frame.",
+      "The power servo is done after each DPD type to ensure accurate output power.",
+      "The power servo uses the FSW K18 application for power servo."
+    ],
+    "first_slot_k18": [
+      "The 5GNR waveform used in this test is a 10MHz UL, 30kHz SCS, 24QAM, 24RB, 0rbo configuration.",
+      "This test utilizes only the first slot of the 5G frame.",
+      "The power servo is done after each DPD type to ensure accurate output power.",
+      "The power servo uses the FSW K18 application for power servo."
+    ]
+  }
+}

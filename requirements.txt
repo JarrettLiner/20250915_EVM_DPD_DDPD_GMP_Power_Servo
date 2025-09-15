@@ -1,0 +1,11 @@
+# Python version requirement
+#  python>=3.8
+
+# Core packages
+numpy>=1.24.0
+pandas>=2.0.0
+openpyxl>=3.1.0  # Needed for Excel export
+
+# Optional / external dependencies
+# pyvisa can be used if needed: pip install pyvisa>=1.12.0
+
