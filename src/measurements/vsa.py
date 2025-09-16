@@ -88,6 +88,11 @@ class VSA:
             self.instr.query('CONF:GEN:SETT:UPD:RF; *OPC?')
             self.instr.query('CONF:SETT:RF; *OPC?')
             self.instr.query('CONF:SETT:NR5G; *OPC?')
+            self.instr.query(':SENS:ADJ:LEV; *OPC?')
+            self.instr.query(':SENS:ADJ:EVM; *OPC?')
+            self.instr.query(':DISP:WIND3:SUBW1:TRAC:Y:SCAL:AUTO ALL; *OPC?')
+            self.instr.query(':CONF:NR5G:DL:CC1:RFUC:FZER:MODE CF; *OPC?')
+            self.instr.query(':INIT:IMM; *OPC?')
 
             # Amplifier/K18 setup
             K18_setup_start = time()
@@ -98,6 +103,7 @@ class VSA:
             self.instr.query(':SENS:ADJ:LEV; *OPC?')
             self.instr.query(':TRIG:SEQ:SOUR EXT; *OPC?')
             self.instr.query('INIT:CONT OFF; *OPC?')
+            self.instr.query(':INIT:IMM; *OPC?')
             self.instr.query('INST:SEL "5G NR"; *OPC?')
             K18_setup_time = time() - K18_setup_start
             print(f"K18 setup time: {K18_setup_time:.3f}s")
@@ -238,7 +244,7 @@ class VSA:
         """
         try:
             total_start = time()
-
+            self.instr.query(':CONF:NR5G:DL:CC1:RFUC:FZER:MODE CF; *OPC?')
             # EVM measurement
             evm_start = time()
             self.instr.query('INIT:CONT OFF; *OPC?')
@@ -503,3 +509,4 @@ class VSA:
         except Exception as e:
             logger.error(f"Error closing VSA socket: {str(e)}")
             raise
+# ==============================================================

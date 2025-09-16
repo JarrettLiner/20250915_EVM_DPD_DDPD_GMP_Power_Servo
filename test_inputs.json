@@ -2,8 +2,8 @@
   "Sweep_Measurement": {
     "range": {
       "start_ghz": 2.0,
-      "stop_ghz": 2.05,
-      "step_mhz": 50,
+      "stop_ghz": 3.0,
+      "step_mhz": 1000,
       "power_dbm": 5.0,
       "tolerence_db": 0.1,
       "expected_gain_db": 18.0,

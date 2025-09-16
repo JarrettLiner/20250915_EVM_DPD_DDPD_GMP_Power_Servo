@@ -44,6 +44,7 @@ class VSG:
         self.vsg.query(
             'SYSTem:RCL \'/var/user/Qorvo/NR5G_10MHz_UL_30kHzSCS_24QAM_24rb_0rbo.savrcltxt\' ;*OPC?'
         )
+        self.vsg.query(':OUTput1:AMODe AUTO; *OPC?') # Set ATTN mode to AUTO
 
         # Track and log setup time
         self.setup_time = time() - start_time
@@ -69,6 +70,7 @@ class VSG:
         """
         # Apply output power offset
         self.vsg.write(f':SOUR1:POW:LEV:IMM:OFFS {vsg_offset:.3f}')
+        self.vsg.query(':OUTput1:AMODe AUTO; *OPC?')  # Set ATTN mode to AUTO
 
         # Set RF frequency
         self.vsg.query(f':SOUR1:FREQ:CW {freq}; *OPC?')
