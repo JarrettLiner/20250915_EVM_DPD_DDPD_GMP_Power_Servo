@@ -20,13 +20,13 @@
       "The 5GNR waveform used in this test is a 10MHz UL, 30kHz SCS, 24QAM, 24RB, 0rbo configuration.",
       "This test utilizes the full 5G frame.",
       "The power servo is done after each DPD type to ensure accurate output power.",
-      "The power servo uses the NRX power meter external sensors for power servo."
+      "The power servo uses the NRX power meter and external sensors for power servo."
     ],
     "first_slot_nrx": [
       "The 5GNR waveform used in this test is a 10MHz UL, 30kHz SCS, 24QAM, 24RB, 0rbo configuration.",
       "This test utilizes only the first slot of the 5G frame.",
       "The power servo is done after each DPD type to ensure accurate output power.",
-      "The power servo uses the NRX power meter external sensors for power servo."
+      "The power servo uses the NRX power meter and external sensors for power servo."
     ],
     "full_frame_k18": [
       "The 5GNR waveform used in this test is a 10MHz UL, 30kHz SCS, 24QAM, 24RB, 0rbo configuration.",
