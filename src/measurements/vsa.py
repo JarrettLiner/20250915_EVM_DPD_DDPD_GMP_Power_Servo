@@ -91,7 +91,7 @@ class VSA:
             self.instr.query(':SENS:ADJ:LEV; *OPC?')
             self.instr.query(':SENS:ADJ:EVM; *OPC?')
             self.instr.query(':DISP:WIND3:SUBW1:TRAC:Y:SCAL:AUTO ALL; *OPC?')
-            self.instr.query(':CONF:NR5G:DL:CC1:RFUC:FZER:MODE CF; *OPC?')
+            #  self.instr.query(':CONF:NR5G:DL:CC1:RFUC:FZER:MODE CF; *OPC?')
             self.instr.query(':INIT:IMM; *OPC?')
 
             # Amplifier/K18 setup
@@ -244,7 +244,6 @@ class VSA:
         """
         try:
             total_start = time()
-            self.instr.query(':CONF:NR5G:DL:CC1:RFUC:FZER:MODE CF; *OPC?')
             # EVM measurement
             evm_start = time()
             self.instr.query('INIT:CONT OFF; *OPC?')
@@ -486,8 +485,13 @@ class VSA:
             logger.info(f"GMP DPD done: Power={gmp_power}, EVM={gmp_evm}, Total={total_time:.3f}s")
 
             # Restore EVM mode
-            self.instr.query('CONF:NR5G:MEAS EVM; *OPC?')
-            self.instr.query('CONF:MDPD:WAV:SEL REF;*OPC?')
+            self.instr.query(':INST:SEL "Amplifier"; *OPC?')
+            self.instr.query(':CONF:MDPD:WAV:SEL REF; *OPC?')
+            self.instr.query(':CONF:DDPD:APPL:STAT OFF; *OPC?')
+            self.instr.query(':INST:SEL "5G NR"; *OPC?')
+            self.instr.query(':CONF:NR5G:MEAS EVM; *OPC?')
+            self.instr.query(f':CONF:NR5G:DL:CC1:RFUC:STAT OFF; *OPC?')
+
 
             return (gmp_power, gmp_evm, gmp_evm_time,
                     gmp_chan_pow, gmp_adj_lower, gmp_adj_upper,

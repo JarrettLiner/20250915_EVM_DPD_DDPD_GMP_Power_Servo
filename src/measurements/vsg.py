@@ -73,7 +73,8 @@ class VSG:
         self.vsg.query(':OUTput1:AMODe AUTO; *OPC?')  # Set ATTN mode to AUTO
 
         # Set RF frequency
-        self.vsg.query(f':SOUR1:FREQ:CW {freq}; *OPC?')
+        self.vsg.query(f':SOUR1:FREQ:CW {freq}; *OPC?') # Set CW frequency
+        #  self.vsg.query(f':SOUR1:BB:NR5G:CELL0:PCFR {freq}; *OPC?') # Set NR5G primary cell frequency
 
         # Set output power
         self.vsg.query(f':SOUR1:POW:LEV:IMM:AMPL {initial_power}; *OPC?')
