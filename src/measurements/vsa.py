@@ -77,9 +77,13 @@ class VSA:
 
             # Load selected memory setup file
             self.instr.query(fr'MMEM:LOAD:STAT 1,"{setup_file}"; *OPC?')
+            #  self.instr.query('CONF:NR5G:DL:CC1:RFUC:STAT ON; *OPC?')
+            #  self.instr.query('CONF:NR5G:DL:CC1:RFUC:FZER:MODE CF; *OPC?')
+            #  self.instr.query(':SENS:SWE:TIME 0.01; *OPC?')
             self.instr.query('INIT:IMM; *OPC?')
 
             # Ensure 5G NR measurement setup
+            '''
             self.instr.query('INST:SEL "5G NR"; *OPC?')
             self.instr.query(':CONF:GEN:CONN:STAT ON; *OPC?')
             self.instr.query('CONF:GEN:CONT:STAT ON; *OPC?')
@@ -90,11 +94,15 @@ class VSA:
             self.instr.query('CONF:SETT:NR5G; *OPC?')
             self.instr.query(':SENS:ADJ:LEV; *OPC?')
             self.instr.query(':SENS:ADJ:EVM; *OPC?')
-            self.instr.query(':DISP:WIND3:SUBW1:TRAC:Y:SCAL:AUTO ALL; *OPC?')
+            self.instr.query(':DISP:WIND3:SUBW1:TRAC:Y:SCAL:AUTO ALL; *OPC?')            
             #  self.instr.query(':CONF:NR5G:DL:CC1:RFUC:FZER:MODE CF; *OPC?')
             self.instr.query(':INIT:IMM; *OPC?')
-
+            '''
             # Amplifier/K18 setup
+            self.write_command_opc('INST:SEL "Amplifier"')
+            self.instr.query('CONF:GEN:CONT:STAT ON; *OPC?')
+
+            '''
             K18_setup_start = time()
             self.instr.query(':INST:CRE:NEW AMPL, "Amplifier"; *OPC?')
             self.instr.query('CONF:GEN:CONT:STAT ON; *OPC?')
@@ -107,7 +115,7 @@ class VSA:
             self.instr.query('INST:SEL "5G NR"; *OPC?')
             K18_setup_time = time() - K18_setup_start
             print(f"K18 setup time: {K18_setup_time:.3f}s")
-
+            '''
             # Total setup timing
             self.setup_time = time() - start_time
             print(f"Total VSA setup time: {self.setup_time:.3f}s")
@@ -142,9 +150,22 @@ class VSA:
     def configure(self, freq, vsa_offset):
         """Configure analyzer frequency and offset."""
         try:
+            self.instr.query('INST:SEL "5G NR"; *OPC?')
+            #  self.instr.query('CONF:NR5G:DL:CC1:RFUC:STAT OFF; *OPC?')
+            #  self.instr.query('CONF:NR5G:DL:CC1:RFUC:FZER:MODE CF; *OPC?')
             self.instr.query(f':SENS:FREQ:CENT {freq}; *OPC?')
             self.instr.write(f':DISP:WIND:TRAC:Y:SCAL:RLEV:OFFS {vsa_offset:.2f}')
+            self.instr.query(':SENS:ADJ:EVM; *OPC?')
+            self.instr.query(':DISP:WIND3:SUBW1:TRAC:Y:SCAL:AUTO ALL; *OPC?')
             self.instr.query(':INIT:IMM; *OPC?')
+
+            self.instr.query('INST:SEL "Amplifier"; *OPC?')
+            self.instr.query('CONF:GEN:CONN:STAT ON; *OPC?')
+            self.instr.query('CONF:GEN:CONT:STAT ON; *OPC?')
+            self.instr.write(f':DISP:WIND:TRAC:Y:SCAL:RLEV:OFFS {vsa_offset:.2f}')
+            self.instr.query(f':CONF:GEN:LEV:DUTL {5}; *OPC?')
+            self.instr.query('INST:SEL "5G NR"; *OPC?')
+            logger.info(f"VSA configured: Freq={freq} Hz, Offset={vsa_offset} dB")
         except Exception as e:
             logger.error(f"VSA configuration failed: {str(e)}")
             raise
@@ -186,6 +207,7 @@ class VSA:
             servo_iterations, servo_settle_time = power_servo.servo_power(freq_ghz, target_output, expected_gain)
             servo_time = round(time() - start_time, 3)
             logger.info(f"Power servo completed in {servo_time:.3f}s ({servo_iterations} iterations)")
+            print(f"Power servo time: {servo_time:.3f}s over {servo_iterations} iterations, settle time: {servo_settle_time:.3f}s, Power Servo Target: {target_output} dBm")
             return servo_iterations, servo_time, servo_settle_time
         except Exception as e:
             logger.error(f"Power servo failed: {str(e)}")
@@ -197,15 +219,31 @@ class VSA:
         Returns elapsed time in seconds.
         """
         try:
+            self.instr.query('INST:SEL "Amplifier"; *OPC?')
+
+            self.instr.query('CONF:GEN:CONN:STAT ON; *OPC?')
+            self.instr.query('CONF:GEN:CONT:STAT ON; *OPC?')
+            self.instr.query(':CONF:SETT; *OPC?')
+            self.instr.query('INIT:CONT OFF; *OPC?')
+            self.instr.query('INIT:IMM; *OPC?')
             self.instr.query(':SENS:PSER:STAT ON; *OPC?')
             self.instr.query(f':SENS:PSER:TARG:VAL {target_output}; *OPC?')
             self.instr.query(f':SENS:PSER:MAX:ITER {max_iterations}; *OPC?')
-            self.instr.query(':SENS:PSER:GLC RFL; *OPC?')
+            #  self.instr.query(':SENS:PSER:GLC RFL; *OPC?')
             start_time = time()
             self.instr.query(':SENS:PSER:STAR; *OPC?')
+            #  self.instr.query(':SENS:PSER:STAR; *OPC?')
             elapsed = round(time() - start_time, 3)
+            self.instr.query(':INIT:IMM; *OPC?')
             logger.info(f"K18 power servo completed in {elapsed:.3f}s")
+            '''
+            self.instr.query('CONF:GEN:CONT:STAT OFF; *OPC?')
+            self.instr.query('CONF:GEN:CONN:STAT OFF; *OPC?')
+            '''
+            PowerLevel = self.instr.query(':FETCh:POWer:OUTPut:CURRent:RES?; *OPC?')
+            print(f"K18 power servo time: {elapsed:.3f}s, Power Servo Target: {PowerLevel} dBm")
             return elapsed
+
         except Exception as e:
             logger.error(f"K18 power servo failed: {str(e)}")
             raise
@@ -234,7 +272,10 @@ class VSA:
     # ----------------------------------------------------------
     # Baseline EVM/ACLR measurement (no DPD applied)
     # ----------------------------------------------------------
-    def measure_evm(self, freq_str, vsa_offset, target_output):
+    def measure_evm(self, freq_str, vsa_offset, target_output, servo_iterations,
+                           freq_ghz, expected_gain, power_servo,
+                           USE_POWER_SERVO=None, USE_K18_POWER_SERVO=None):
+
         """
         Perform baseline measurement (before DPD):
           - EVM
@@ -245,8 +286,19 @@ class VSA:
         try:
             total_start = time()
             # EVM measurement
-            evm_start = time()
+
             self.instr.query('INIT:CONT OFF; *OPC?')
+            self.instr.query('INIT:IMM; *OPC?')
+
+            # Run servos (external + K18 as configured)
+            power_servo_start = time()
+            use_power_servo, use_k18_power_servo = self._resolve_servo_flags(USE_POWER_SERVO, USE_K18_POWER_SERVO)
+            servo_loops, ext_servo_time, k18_time = self._run_servos(power_servo, freq_ghz, target_output,
+                                                                     expected_gain, servo_iterations,
+                                                                     use_power_servo, use_k18_power_servo)
+            power_servo_time = time() - power_servo_start
+            evm_start = time()
+            self.instr.query(':INST:SEL "5G NR"; *OPC?')
             self.instr.query('INIT:IMM; *OPC?')
             vsa_power = self.queryFloat('FETC:CC1:ISRC:FRAM:SUMM:POW:AVERage?')
             evm = self.queryFloat('FETC:CC1:ISRC:FRAM:SUMM:EVM:ALL:AVERage?')
@@ -270,7 +322,7 @@ class VSA:
             total_evm_time = time() - total_start
             logger.info(f"Baseline measurement done: Power={vsa_power}, EVM={evm}, ACLR time={aclr_time:.3f}s")
 
-            return (vsa_power, evm, evm_time, chan_pow, adj_lower, adj_upper, aclr_time)
+            return (vsa_power, evm, evm_time, chan_pow, adj_lower, adj_upper, aclr_time, total_evm_time, servo_loops, ext_servo_time, k18_time)
 
         except Exception as e:
             logger.error(f"Baseline EVM measurement failed: {str(e)}")
@@ -290,15 +342,24 @@ class VSA:
 
             # Select amplifier block
             self.write_command_opc('INST:SEL "Amplifier"')
+            self.instr.query('CONF:GEN:CONN:STAT ON; *OPC?')
+            self.instr.query('CONF:GEN:CONT:STAT ON; *OPC?')
+            self.instr.query('CONF:SETT; *OPC?')
+            self.instr.query(':CONF:REFS:CGW:READ; *OPC?')
 
             # Configure Single DPD
             dpd_setup_start = time()
+            self.instr.query('INIT:CONT OFF; *OPC?')
             self.instr.query('INIT:IMM; *OPC?')
+            self.instr.query('CONF:DDPD:STAT OFF; *OPC?')
             self.instr.query('CONF:DPD:SHAP:MODE POLY; *OPC?')
             self.instr.query(':CONF:DPD:TRAD 10; *OPC?')
+            self.instr.query('INIT:IMM; *OPC?')
+            self.instr.query(':CONF:DPD:FILE:GEN; *OPC?')
             self.instr.query(':CONF:DPD:UPD; *OPC?')
             self.instr.query('CONF:DPD:AMAM:STAT ON; *OPC?')
             self.instr.query('CONF:DPD:AMPM:STAT ON; *OPC?')
+            self.instr.query('INIT:IMM; *OPC?')
             dpd_setup_time = time() - dpd_setup_start
             print(f"DPD setup time: {dpd_setup_time:.3f}s")
             print(" this includes single dpd config and update")
@@ -318,6 +379,7 @@ class VSA:
             evm_start = time()
             self.instr.query('CONF:NR5G:MEAS EVM; *OPC?')
             self.instr.query('INIT:IMM; *OPC?')
+            self.instr.query('INIT:IMM; *OPC?')
             dpd_power = self.queryFloat('FETC:CC1:ISRC:FRAM:SUMM:POW:AVERage?')
             dpd_evm = self.queryFloat('FETC:CC1:ISRC:FRAM:SUMM:EVM:ALL:AVERage?')
             print(f"Single DPD measurement: Power={dpd_power}, EVM={dpd_evm}")
@@ -335,6 +397,14 @@ class VSA:
             total_time = time() - total_start
             print(f"Total single dpd evm time: {total_time:.3f}s")
             logger.info(f"Single DPD done: Power={dpd_power}, EVM={dpd_evm}, Total={total_time:.3f}s")
+            self.write_command_opc('INST:SEL "Amplifier"')
+            self.instr.query('CONF:DPD:AMAM:STAT OF; *OPC?')
+            self.instr.query('CONF:DPD:AMPM:STAT OF; *OPC?')
+            self.instr.query('INST:SEL "5G NR"; *OPC?')
+            '''
+            self.instr.query('CONF:GEN:CONT:STAT OFF; *OPC?')
+            self.instr.query('CONF:GEN:CONN:STAT OFF; *OPC?')
+            '''
 
             return (dpd_power, dpd_evm, evm_time,
                     chan_pow, adj_lower, adj_upper,
@@ -353,10 +423,16 @@ class VSA:
                               USE_POWER_SERVO=None, USE_K18_POWER_SERVO=None):
         """Run iterative DPD (multiple correction loops) + measurement."""
         try:
+            # Select amplifier
+
+            self.write_command_opc('INST:SEL "Amplifier"')
+            self.instr.query('CONF:GEN:CONN:STAT ON; *OPC?')
+            self.instr.query('CONF:GEN:CONT:STAT ON; *OPC?')
+            self.instr.query('CONF:SETT; *OPC?')
+            self.instr.query(':CONF:REFS:CGW:READ; *OPC?')
             total_start = time()
             ddpd_setup_start = time()
-            # Select amplifier
-            self.write_command_opc('INST:SEL "Amplifier"')
+
 
             # Configure Iterative DPD
             ddpd_measure_start = time()
@@ -384,6 +460,7 @@ class VSA:
             self.instr.query('INST:SEL "5G NR"; *OPC?')
             self.instr.query('CONF:NR5G:MEAS EVM; *OPC?')
             self.instr.query('INIT:IMM; *OPC?')
+            self.instr.query('INIT:IMM; *OPC?')
             ddpd_power = self.queryFloat('FETC:CC1:ISRC:FRAM:SUMM:POW:AVERage?')
             ddpd_evm = self.queryFloat('FETC:CC1:ISRC:FRAM:SUMM:EVM:ALL:AVERage?')
             print(f"Iterative DPD measurement: Power={ddpd_power}, EVM={ddpd_evm}")
@@ -401,6 +478,9 @@ class VSA:
             ddpd_total_time = time() - total_start
             print(f"Total iterative dpd evm time: {ddpd_total_time:.3f}s")
             logger.info(f"Iterative DPD done: Power={ddpd_power}, EVM={ddpd_evm}, Total={ddpd_total_time:.3f}s")
+            self.instr.query(':CONF:DDPD:STAT OFF; *OPC?')
+            self.instr.query('CONF:GEN:CONT:STAT OFF; *OPC?')
+            self.instr.query('CONF:GEN:CONN:STAT OFF; *OPC?')
 
             return (ddpd_power, ddpd_evm, ddpd_evm_time,
                     ddpd_chan_pow, ddpd_adj_lower, ddpd_adj_upper,
@@ -419,6 +499,11 @@ class VSA:
                         USE_POWER_SERVO=None, USE_K18_POWER_SERVO=None):
         """Run GMP (Generalized Memory Polynomial) DPD + measurement."""
         try:
+            self.write_command_opc('INST:SEL "Amplifier"')
+            self.instr.query('CONF:GEN:CONN:STAT ON; *OPC?')
+            self.instr.query('CONF:GEN:CONT:STAT ON; *OPC?')
+            self.instr.query('CONF:SETT; *OPC?')
+            self.instr.query(':CONF:REFS:CGW:READ; *OPC?')
             total_start = time()
             gmp_setup_start = time()
             # Select amplifier + run DDPD as base
@@ -448,6 +533,8 @@ class VSA:
             print(" this includes gmp config, calc and sync to vsg")
             gmp_setup_time = time() - gmp_setup_start
             print(f"GMP total setup time: {gmp_setup_time:.3f}s")
+            self.instr.query('CONF:GEN:CONT:STAT OFF; *OPC?')
+            self.instr.query('CONF:GEN:CONN:STAT OFF; *OPC?')
 
             # Run servos
             gmp_power_servo_start = time()
@@ -491,8 +578,8 @@ class VSA:
             self.instr.query(':INST:SEL "5G NR"; *OPC?')
             self.instr.query(':CONF:NR5G:MEAS EVM; *OPC?')
             self.instr.query(f':CONF:NR5G:DL:CC1:RFUC:STAT OFF; *OPC?')
-
-
+            self.instr.query('CONF:GEN:CONT:STAT OFF; *OPC?')
+            self.instr.query('CONF:GEN:CONN:STAT OFF; *OPC?')
             return (gmp_power, gmp_evm, gmp_evm_time,
                     gmp_chan_pow, gmp_adj_lower, gmp_adj_upper,
                     gmp_aclr_time, total_time,

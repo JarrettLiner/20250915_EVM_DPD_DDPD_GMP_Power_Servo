@@ -1,10 +1,10 @@
 {
   "Sweep_Measurement": {
     "range": {
-      "start_ghz": 2.0,
-      "stop_ghz": 2.1,
+      "start_ghz": 4.0,
+      "stop_ghz": 4.6,
       "step_mhz": 100,
-      "power_dbm": 5.0,
+      "power_dbm": 6.0,
       "tolerence_db": 0.1,
       "expected_gain_db": 18.0,
       "ddpd_iterations": 5,
@@ -12,8 +12,8 @@
       "use_power_servo": false,
       "use_K18_power_servo": true
     },
-    "user_comment_mode": "full_frame_nrx",
-    "setup_mode": "fullframe"
+    "user_comment_mode": "first_slot_K18",
+    "setup_mode": "firstslot"
   },
   "User_Comments": {
     "full_frame_nrx": [

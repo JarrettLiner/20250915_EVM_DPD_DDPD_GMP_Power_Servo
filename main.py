@@ -72,9 +72,9 @@ def run_sweep():
     start = sweep_params["start_ghz"] * 1e9
     stop = sweep_params["stop_ghz"] * 1e9
     step = sweep_params["step_mhz"] * 1e6
-    target_output = sweep_params.get("power_dbm", 10.0)
+    target_output = sweep_params.get("power_dbm", 6.0)
     tolerance = sweep_params.get("tolerence_db", 0.05)
-    expected_gain = sweep_params.get("expected_gain_db", 0.0)
+    expected_gain = sweep_params.get("expected_gain_db", 18.0)
     ddpd_iterations = sweep_params.get("ddpd_iterations", 5)
     servo_iterations = sweep_params.get("servo_iterations", 5)
 
@@ -136,15 +136,18 @@ def run_sweep():
             # -------------------------
             # Baseline measurement (before DPD)
             # -------------------------
+
             servo_iterations_count, servo_settle_time = power_servo.servo_power(
                 freq_ghz, target_output, expected_gain
             )
+
             corrected_input, corrected_output = pm.measure()
             start_time = time()
             freq_str = f"{freq:.0f}"
 
-            vsa_power, evm_value, evm_time, chan_pow, adj_chan_lower, adj_chan_upper, aclr_time = (
-                vsa.measure_evm(freq_str, vsa_offset, corrected_output)
+            (vsa_power, evm_value, evm_time, chan_pow, adj_chan_lower, adj_chan_upper, aclr_time, total_evm_time, servo_loops,
+            ext_servo_time, k18_time) = (
+                vsa.measure_evm(freq_str, vsa_offset, target_output, servo_iterations, freq_ghz, expected_gain, power_servo)
             )
 
             # -------------------------
@@ -162,6 +165,7 @@ def run_sweep():
             # -------------------------
             # Iterative DPD measurement
             # -------------------------
+            vsg.configure(freq, target_output - expected_gain, vsg_offset)
             (ddpd_power, ddpd_evm, ddpd_time,
              ddpd_chan_pow, ddpd_adj_chan_lower, ddpd_adj_chan_upper,
              ddpd_aclr_time, ddpd_total_time,
@@ -173,6 +177,7 @@ def run_sweep():
             # -------------------------
             # GMP DPD measurement
             # -------------------------
+            vsg.configure(freq, target_output - expected_gain, vsg_offset)
             (gmp_power, gmp_evm, gmp_time,
              gmp_chan_pow, gmp_adj_chan_lower, gmp_adj_chan_upper,
              gmp_aclr_time, gmp_total_time,

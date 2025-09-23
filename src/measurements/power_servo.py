@@ -57,6 +57,7 @@ class PowerServo:
         # Measure initial DUT gain
         expected_gain = self.pm.measure()[1] - self.pm.measure()[0]
         self.logger.info(f"Measured gain in dB: {expected_gain:.3f}")
+        print(f"Measured gain in dB: {expected_gain:.3f}")
 
         # Calculate initial input power estimate
         initial_pwr = target_output - expected_gain
@@ -94,4 +95,5 @@ class PowerServo:
 
         # Final log + return
         self.logger.info(f"Servo Iterations: {servo_iterations}, Servo Time: {servo_settle_time}")
+        print(f"Servo converged after {servo_iterations} iterations , in {servo_settle_time} s")
         return servo_iterations, servo_settle_time
